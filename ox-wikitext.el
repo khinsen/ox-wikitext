@@ -39,8 +39,7 @@
 
 (eval-when-compile
   (require 's)
-  (require 'ox)
-  (require 'ox-extra))
+  (require 'ox))
 
 ;;; Internal functions
 (defun vct:tiddlywiki-date ()
