@@ -262,21 +262,4 @@ CONTENTS is the text within bold markup. INFO is a plist used as a communication
     (org-export-to-file 'wikitext fileName async subtreep visible-only body-only ext-plist)
     ))
 
-;;;###autoload
-;(defun org-wikitext-export-to-wikitext
-;    (&optional async subtreep visible-only body-only ext-plist)
-;  (interactive)
-;  (let* ((extension (concat "." org-wikitext-extension))
-;         (file (org-export-output-file-name extension subtreep))
-;         (org-export-coding-system org-wikitext-coding-system))
-;    (org-export-to-file 'wikitext file
-;      async subtreep visible-only body-only ext-plist)))
-;
-;;;;###autoload
-;(defun org-wikitext-export-to-wikitext
-;    (backend file &optional subtreep visible-only body-only ext-plist)
-;  (org-publish-org-to 'wikitext filename
-;                      (concat "." (or (plist-get plist :wikitext-extension)
-;                                      org-wikitext-extension "tid"))
-;plist pub-dir))
 (provide 'ox-wikitext)
