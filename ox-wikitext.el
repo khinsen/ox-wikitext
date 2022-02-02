@@ -262,4 +262,15 @@ CONTENTS is the text within bold markup. INFO is a plist used as a communication
     (org-export-to-file 'wikitext fileName async subtreep visible-only body-only ext-plist)
     ))
 
+;;;###autoload
+(defun org-wikitext-publish-to-wikitext (plist filename pub-dir)
+  "Publish an org file to WikiText.
+
+FILENAME is the filename of the Org file to be published.  PLIST
+is the property list for the given project.  PUB-DIR is the
+publishing directory.
+
+Return output file name."
+  (org-publish-org-to 'wikitext filename ".tid" plist pub-dir))
+
 (provide 'ox-wikitext)
