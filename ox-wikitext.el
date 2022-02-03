@@ -152,6 +152,14 @@ CONTENTS is the text within bold markup. INFO is a plist used as a communication
 
 ;;;; Link
 
+(defun org-wikitext-title-for-roam-link (id)
+  (caar
+   (org-roam-db-query
+    [:select title :from nodes
+             :where (= id $s1)
+             :limit 1]
+    id)))
+
 (defun org-wikitext-link (link desc info)
   "Transcode LINK object.
 DESC is the description of the link, or an empty string. INFO is a plist used as a communication channel."
@@ -163,10 +171,15 @@ DESC is the description of the link, or an empty string. INFO is a plist used as
                  (concat type ":" raw-path))
                 ((string= type "file")
                  (org-export-file-uri raw-path))
+                ((string= type "id") ;; only for org-roam page links
+                 (org-wikitext-title-for-roam-link raw-path))
                 (t raw-path))))
     (cond
      ;; Link with description
-     ((and path desc) (format "[[%s|%s]]" desc path))
+     ((and path desc)
+      (if (string= path desc)
+          (format "[[%s]]" path)
+        (format "[[%s|%s]]" desc path)))
      ;; Link without description
      (path (format "[[%s]]" path))
      ;; Link with only description
