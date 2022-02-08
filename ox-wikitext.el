@@ -228,12 +228,12 @@ CONTENTS is the transcoded contents string. INFO is a plist holding export optio
   (let* (
          (title (org-export-data (plist-get info :title) info))
          (date (org-export-data (plist-get info :date) info))
-         (keywords (org-export-data (plist-get info :keywords) info))
+         (tags (org-export-data (plist-get info :filetags) info))
          )
     (s-concat
      (format "created: %s\n" date)
      (format "modified: %s\n" (vct:tiddlywiki-date))
-     (format "tags: %s\n" keywords)
+     (format "tags: %s\n" tags)
      (format "title: %s\n" title)
      "type: text/vnd.tiddlywiki\n\n"
      contents)))
