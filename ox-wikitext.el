@@ -130,7 +130,7 @@ a communication channel."
                  (org-element-property :title headline)
                  'wikitext info)))
     (concat
-     (format "%s %s\n" (apply 'concat (make-list level "!")) title)
+     (format "%s● %s\n\n" (apply 'concat (make-list (- level 1) "―")) title)
      contents)
     )
   )
