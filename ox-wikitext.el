@@ -227,17 +227,17 @@ CONTENTS is the text within bold markup. INFO is a plist used as a communication
 CONTENTS is the transcoded contents string. INFO is a plist holding export options"
   (let* (
          (title (org-export-data (plist-get info :title) info))
-         (date (org-export-data (plist-get info :date) info))
          (tags (org-export-data (plist-get info :filetags) info))
          (refs (org-entry-get (point-min) "ROAM_REFS"))
          )
     (s-concat
-     (format "created: %s\n" date)
-     (format "modified: %s\n" (vct:tiddlywiki-date))
+     (format "created: %s\n" (org-wikitext-first-revision-time-stamp))
+     (format "modified: %s\n" (org-wikitext-last-revision-time-stamp))
      (format "tags: %s\n" tags)
      (format "references: %s\n" (if refs refs ""))
      (format "title: %s\n" title)
      "type: text/vnd.tiddlywiki\n\n"
+     "{{||$:/org-roam/ReferenceTemplate}}\n\n"
      contents)))
 
 ;;;; Underline
