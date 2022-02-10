@@ -220,6 +220,25 @@ CONTENTS is the text within bold markup. INFO is a plist used as a communication
 CONTENTS is the text within bold markup. INFO is a plist used as a communication channel."
   (format "~~%s~~" contents))
 
+;; Retrieve initial and last modification time stamps via git.
+
+(defun org-wikitext-time-stamp (time)
+  (format-time-string "%Y%m%d%H%M%S%3N" time))
+
+(defun org-wikitext-first-revision-time-stamp ()
+  (--> (buffer-file-name)
+       (concat "git -C " org-roam-directory " log --format=%at -- " it " | tail -1")
+       shell-command-to-string
+       string-to-number
+       org-wikitext-time-stamp))
+
+(defun org-wikitext-last-revision-time-stamp ()
+  (--> (buffer-file-name)
+       (concat "git -C " org-roam-directory " log --format=%at -- " it " | head -1")
+       shell-command-to-string
+       string-to-number
+       org-wikitext-time-stamp))
+
 ;;;; Template
 
 (defun org-wikitext-template (contents info)
