@@ -130,10 +130,13 @@ a communication channel."
                  (org-element-property :title headline)
                  'wikitext info)))
     (concat
-     (format "%s● %s\n\n" (apply 'concat (make-list (- level 1) "―")) title)
-     contents)
-    )
-  )
+     (format "\n%s●\n%s%s\n%s\n\n\n"
+             (apply 'concat (make-list (- level 1) "―"))
+             "@@font-weight:bolder;font-size:1.2em;line-height:1.5em;"
+             title
+             "@@")
+     contents
+     (if (= level 1) "\n---" ""))))
 
 ;;;; Horizontal rule
 
