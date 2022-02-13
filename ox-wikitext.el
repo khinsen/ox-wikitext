@@ -134,13 +134,8 @@ a communication channel."
                  (org-element-property :title headline)
                  'wikitext info)))
     (concat
-     (format "\n%s●\n%s%s\n%s\n\n\n"
-             (apply 'concat (make-list (- level 1) "―"))
-             "@@font-weight:bolder;font-size:1.2em;line-height:1.5em;"
-             title
-             "@@")
-     contents
-     (if (= level 1) "\n---" ""))))
+     (format "<<nh%s \"%s\">>\n\n" level title)
+     contents)))
 
 ;;;; Horizontal rule
 
@@ -263,8 +258,10 @@ CONTENTS is the transcoded contents string. INFO is a plist holding export optio
      (format "references: %s\n" (if refs refs ""))
      (format "title: %s\n" title)
      "type: text/vnd.tiddlywiki\n\n"
-     "{{||$:/org-roam/ReferenceTemplate}}\n\n"
-     contents)))
+     "\\import [[$:/org-roam/NoteMacros]]\n\n"
+     "<<references>>\n\n"
+     contents
+     "\n\n<<backlinks>>\n")))
 
 ;;;; Underline
 
