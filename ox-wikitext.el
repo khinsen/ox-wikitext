@@ -1,6 +1,7 @@
 ;;; ox-wikitext --- TiddlyWiki WikiText Back-End for Org Export Engine
 
 ;; Copyright (C) 2016 Victor Santos
+;; Copyright (C) 2022 Konrad Hinsen
 
 ;; Author: Victor Santos <victor_santos@fisica.ufc.br>
 ;; Keywords: outlines, tiddlywiki, wiki, wikitext
@@ -22,8 +23,11 @@
 
 ;;; Commentary:
 ;;
-;; ox-wikitext.el lets you convert Org files to WikiText files
-;; using the ox.el export engine.
+;; ox-wikitext.el lets you convert Org-roam files to tiddler files
+;; using WikiText markup, via the ox.el export engine.
+;;
+;; This is a heavily personalized version, specifically for exporting
+;; notes from an org-roam directory managed by git.
 ;;
 ;; Put this file into your load-path and the following into your ~/.emacs:
 ;;	 (require 'ox-wikitext)
