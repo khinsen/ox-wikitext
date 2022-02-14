@@ -228,19 +228,34 @@ CONTENTS is the text within bold markup. INFO is a plist used as a communication
 (defun org-wikitext-time-stamp (time)
   (format-time-string "%Y%m%d%H%M%S%3N" time))
 
-(defun org-wikitext-first-revision-time-stamp ()
+(defun org-wikitext-file-modification-time ()
+  (--> (buffer-file-name)
+       file-attributes
+       file-attribute-modification-time))
+
+(defun org-wikitext-first-revision-time-stamp-from-git ()
   (--> (buffer-file-name)
        (concat "git -C " org-roam-directory " log --format=%at -- " it " | tail -1")
        shell-command-to-string
-       string-to-number
-       org-wikitext-time-stamp))
+       string-to-number))
 
-(defun org-wikitext-last-revision-time-stamp ()
+(defun org-wikitext-first-revision-time-stamp ()
+  (let ((time-stamp (org-wikitext-first-revision-time-stamp-from-git)))
+    (when (equal time-stamp 0)
+        (setq time-stamp (org-wikitext-file-modification-time)))
+    (org-wikitext-time-stamp time-stamp)))
+
+(defun org-wikitext-last-revision-time-stamp-from-git ()
   (--> (buffer-file-name)
        (concat "git -C " org-roam-directory " log --format=%at -- " it " | head -1")
        shell-command-to-string
-       string-to-number
-       org-wikitext-time-stamp))
+       string-to-number))
+
+(defun org-wikitext-last-revision-time-stamp ()
+  (let ((time-stamp (org-wikitext-last-revision-time-stamp-from-git)))
+    (when (equal time-stamp 0)
+        (setq time-stamp (org-wikitext-file-modification-time)))
+    (org-wikitext-time-stamp time-stamp)))
 
 ;;;; Template
 
