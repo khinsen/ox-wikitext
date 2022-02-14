@@ -335,6 +335,11 @@ is the property list for the given project.  PUB-DIR is the
 publishing directory.
 
 Return output file name."
-  (org-publish-org-to 'wikitext filename ".tid" plist pub-dir))
+  (let* ((extension ".tid")
+         (output-file-name (concat (file-name-as-directory pub-dir)
+		                   (file-name-nondirectory (file-name-sans-extension filename))
+                                   extension)))
+    (when (file-newer-than-file-p filename output-file-name)
+      (org-publish-org-to 'wikitext filename extension plist pub-dir))))
 
 (provide 'ox-wikitext)
