@@ -42,6 +42,7 @@
 (require 'ox-html)
 
 (eval-when-compile
+  (require 'dash)
   (require 's)
   (require 'ox))
 
@@ -134,7 +135,7 @@ a communication channel."
                  (org-element-property :title headline)
                  'wikitext info)))
     (concat
-     (format "<<nh%s \"%s\">>\n\n" level title)
+     (format "\n\n<<nh%s \"%s\">>\n\n" level title)
      contents)))
 
 ;;;; Horizontal rule
@@ -154,7 +155,7 @@ CONTENTS is the text within bold markup. INFO is a plist used as a communication
 
 ;;;; Link
 
-(defun org-wikitext-title-for-roam-link (id)
+(defun org-wikitext-title-for-id (id)
   (caar
    (org-roam-db-query
     [:select title :from nodes
@@ -174,7 +175,7 @@ DESC is the description of the link, or an empty string. INFO is a plist used as
                 ((string= type "file")
                  (org-export-file-uri raw-path))
                 ((string= type "id") ;; only for org-roam page links
-                 (org-wikitext-title-for-roam-link raw-path))
+                 (org-wikitext-title-for-id raw-path))
                 (t raw-path))))
     (cond
      ;; Link with description
@@ -243,20 +244,46 @@ CONTENTS is the text within bold markup. INFO is a plist used as a communication
 
 ;;;; Template
 
+(defun org-wikitext-current-id ()
+  (caar
+   (org-roam-db-query
+    [:select * :from nodes
+             :where (= file $s1)
+             :limit 1]
+    (buffer-file-name))))
+
+(defun org-wikitext-backlinks-for-id (id)
+  (->> (org-roam-db-query
+         [:select * :from links
+                  :where (= dest $s1)]
+         id)
+       (-map #'cadr)
+       -distinct))
+
+(defun org-wikitext-backlink-titles-for-id (id)
+  (->> (org-wikitext-backlinks-for-id id)
+       (-map #'org-wikitext-title-for-id)
+       (-map #'(lambda (s)
+                 (if (s-contains? " " s)
+                     (concat "[[" s "]]")
+                   s)))))
+
 (defun org-wikitext-template (contents info)
   "Return complete document string after HTML conversion.
 CONTENTS is the transcoded contents string. INFO is a plist holding export options"
-  (let* (
-         (title (org-export-data (plist-get info :title) info))
+  (let* ((title (org-export-data (plist-get info :title) info))
          (tags (org-export-data (plist-get info :filetags) info))
          (refs (org-entry-get (point-min) "ROAM_REFS"))
-         )
+         (current-id (org-wikitext-current-id)))
     (s-concat
+     (format "title: %s\n" title)
      (format "created: %s\n" (org-wikitext-first-revision-time-stamp))
      (format "modified: %s\n" (org-wikitext-last-revision-time-stamp))
      (format "tags: %s\n" tags)
      (format "references: %s\n" (if refs refs ""))
-     (format "title: %s\n" title)
+     (format "backlinks: %s\n"
+             (let ((backlinks (org-wikitext-backlink-titles-for-id current-id)))
+               (if backlinks (mapconcat #'identity backlinks " ") "")))
      "type: text/vnd.tiddlywiki\n\n"
      "\\import [[$:/org-roam/NoteMacros]]\n\n"
      "<<references>>\n\n"
